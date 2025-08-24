@@ -53,6 +53,8 @@
             /* Correction pour la bande blanche en bas */
             min-height: 100vh;
             min-height: -webkit-fill-available;
+            /* Nouveau: garantir que le fond couvre toute la zone */
+            background-attachment: fixed;
         }
 
         .overlay {
@@ -403,6 +405,9 @@
             max-height: calc(90vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
             overflow-y: auto;
             margin: auto 0;
+            /* Nouveau: structure pour le défilement */
+            display: flex;
+            flex-direction: column;
         }
         .modal.show .sheet {
             transform: scale(1);
@@ -727,6 +732,53 @@
                 max-height: 35vh;
             }
         }
+
+        /* NOUVEAUX STYLES POUR CORRIGER LES PROBLÈMES */
+        
+        /* Correction pour la barre blanche en mode standalone */
+        body.standalone {
+            background-color: var(--bg1);
+        }
+        
+        /* Structure améliorée pour la modal avec défilement */
+        .modal-content {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .modal-actions {
+            flex-shrink: 0;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: auto;
+        }
+        
+        /* Correction pour iOS - garantit que le fond couvre toute la zone */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                background-attachment: scroll;
+                min-height: -webkit-fill-available;
+            }
+            
+            .modal {
+                padding-bottom: calc(14px + var(--safe-area-inset-bottom) + 10px);
+            }
+        }
+        
+        /* Ajustements pour le défilement et l'accessibilité des boutons */
+        .letter-view-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .letter-scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body>
@@ -790,11 +842,13 @@
                 <button class="btn" id="openEnvelope">Ouvrir</button>
             </div>
         </div>
-        <div class="row" id="letterView" style="display:none">
-            <div class="letter-content">
-                <div class="letter" id="letterText"></div>
+        <div class="letter-view-container" id="letterView" style="display:none">
+            <div class="letter-scroll-container">
+                <div class="letter-content">
+                    <div class="letter" id="letterText"></div>
+                </div>
             </div>
-            <div class="actions">
+            <div class="modal-actions">
                 <button class="btn ghost" id="closeLetter">Fermer</button>
                 <button class="btn close-envelope-btn" id="resetEnvelope">Refermer l'enveloppe</button>
             </div>
@@ -817,14 +871,15 @@
 
     if (isIOS && isInStandaloneMode) {
         document.body.classList.add('ios-standalone');
+        document.body.classList.add('standalone');
     }
 
     const ENVELOPES = [
-        { id: 'mauvaise', emoji: '😔', title: 'Quand tu as eu une mauvaise journée', password: 'courage', message: 'Mon cœur, je sais que ta journée d\'aujourd\'hui n\'a pas été comme tu l\'aurais souhaitée, et tu sais quoi ? C\'est ok. Dans la vie, il y a souvent des jours pas cool, un peu lourds, et puis heureusement, il y a aussi les jours super sympas… comme nos dates, nos moments où on rigole comme des fous et où plus rien d\'autre n\'existe. Comme d\'habitude, on va s\'appeler ce soir, mon ange, et j\'espère que ça compensera un peu cette journée merdique que tu as passée. Parce que j\'adore ces moments avec toi, même si ce n\'est que par la voix, ça me rapproche de toi. Je ne sais pas ce qui s\'est passé exactement… une mauvaise journée de cours, une embrouille avec Diane, ou peut-être Lina qui fait sa maline 😏… Peu importe. Ce n\'est pas grave. Tout ça, c\'est derrière toi maintenant. Le passé reste le passé, et tu n\'as pas besoin d\'y repenser. Ce que jvaimerais, c\'est que tu respires un coup, que tu relâches la pression et que tu penses à moi, à nous. Parce que moi, je pense à toi tout le temps, et je veux que tu gardes en tête que tu n’es jamais seule, peu importe à quel point la journée a été pourrie. Tu es mon rayon de soleil même quand le ciel est gris, Aylie. 🌙🤍' },
+        { id: 'mauvaise', emoji: '😔', title: 'Quand tu as eu une mauvaise journée', password: 'courage', message: 'Mon cœur, je sais que ta journée d\'aujourd\'hui n\'a pas été comme tu l\'aurais souhaitée, et tu sais quoi ? C\'est ok. Dans la vie, il y a souvent des jours pas cool, un peu lourds, et puis heureusement, il y a aussi les jours super sympas… comme nos dates, nos moments où on rigole comme des fous et où plus rien d\'autre n\'existe. Comme d\'habitude, on va s\'appeler ce soir, mon ange, et j\'espère que ça compensera un peu cette journée merdique que tu as passée. Parce que j\'adore ces moments avec toi, même si ce n\'est que par la voix, ça me rapproche de toi. Je ne sais pas ce qui s\'est passé exactement… une mauvaise journée de cours, une embrouille avec Diane, ou peut-être Lina qui fait sa maline 😏… Peu importe. Ce n\'est pas grave. Tout ça, c\'est derrière toi maintenant. Le passé reste le passé, et tu n\'as pas besoin d\'y repenser. Ce que jvaimerais, c\'est que tu respires un coup, que tu relâches la pression et que tu penses à moi, à nous. Parce que moi, je pense à toi tout le temps, et je veux que tu gardes en tête que tu n\'es jamais seule, peu importe à quel point la journée a été pourrie. Tu es mon rayon de soleil même quand le ciel est gris, Aylie. 🌙🤍' },
         { id: 'triste', emoji: '🌧️', title: 'Quand tu es triste', password: 'soleil', message: 'Mon amour, je sais que parfois tu te sens triste, que ton cœur se serre et que les larmes veulent couler toutes seules. Et ça me fait mal de savoir que tu traverses ces moments-là sans que je sois directement à côté de toi. J\'aimerais pouvoir tendre la hand, essuyer chaque larme et t\'enlacer jusqu\'à ce que ton sourire revienne. Parce que ton sourire, Aylie, c\'est la plus belle chose au monde pour moi, et je veux qu\'il brille même dans les journées les plus grises. Tu sais, être triste, c\'est normal. On a tous nos moments de doute et de fatigue. Mais n\'oublie jamais que je suis là, même si ce n\'est pas physiquement. Ferme les yeux et pense à moi, à mes bras autour de toi, à ma voix qui te dit doucement : « Ça va aller, mon cœur. » Et si jamais tu as besoin de parler, peu importe l\'heure ou l\'endroit, je serai toujours la personne qui décroche pour toi. Parce que tes émotions comptent pour moi, et je veux être ton refuge quand le monde semble trop lourd. Tu n\'es pas seule, je t\'aime fort. CLIQUE SUR CE LIEN: https://mewtru.com/mixtape/playback?v=V9PVRfjEBTI%2CuzS3WG6__G4%2COpK12KUzUW0%2CFL1Vf0pvkHw&to=Aylie' },
         { id: 'calin', emoji: '🤗', title: 'Quand tu as besoin d\'un câlin', password: 'hug', message: 'Mon petit ange, si tu as ouvert cette enveloppe, c\'est que tu as besoin d\'un câlin… et tu sais à quel point j\'aimerais être là pour t\'en donner un. Quand je te reverrai, prépare-toi : je vais t\'étouffer dans mes bras tellement mon câlin sera puissant et rempli de tout l\'amour que je garde pour toi. Je te tiendrai si fort que tu n\'auras plus aucun doute, plus aucune peur, juste la chaleur rassurante de mon cœur contre le tien. En attendant ce moment, tu peux te blottir dans un de mes t-shirts, sentir un peu mon odeur, et serrer contre toi le petit nounours que je t\'ai offert. Ce n\'est pas la même chose que mes bras, mais c\'est un petit morceau de moi qui veille sur toi quand je ne suis pas là. Ferme les yeux, respire doucement… et imagine mes bras autour de toi. Tu es en sécurité, toujours,je t\'aime fort❤️​'},
         { id: 'ennui', emoji: '😴', title: 'Quand tu t\'ennuies', password: 'fun', message: 'Mon petit coeur, si tu t\'ennuies en ce moment, n\'hésite pas : appelle-moi tout de suite ! On pourra se regarder un film sur Xalaflix, comme on adore le faire, ou bien lancer une partie de Uno sur Plato. Même if on n\'est pas dans la même pièce, ces moments partagés me rapprochent de toi et me font sourire rien qu\'en pensant à toi. Alors ne laisse pas l\'ennui s\'installer, prends ton téléphone, et on va transformer ce moment en rigolade, en complicité, en souvenirs qu\'on pourra raconter plus tard. Je suis là pour toi, même dans les moments tranquilles ou un peu longs. 🤍' },
-        { id: 'manque', emoji: '🌙', title: 'Quand je te manque', password: 'roro', message: 'Mon amour, si tu as ouvert cette enveloppe, c\'est que je te manque un peu… et crois-moi, moi aussi tu me manques terriblement. Chaque seconde loin de toi me semble interminable, chaque minute sans ton sourire est un petit morceau de journée qui manque à mon bonheur. Ferme les yeux un instant et imagine-moi là, à tes côtés, te prenant doucement la hand, te serrant fort contre moi. Je voudrais que tu sentes à quel point je tiens à toi, que tu puisses ressentir mon amour même à distance. Respire profondément… et pense à nos fous rires, nos câlins interminables, nos moments rien qu\'à nous. Chaque souvenir est un pont entre nous, et chaque pensée que j\'ai de toi me rapproche un peu plus de toi. And même si je ne peux pas être physiquement là maintenant, sache que tu n\'es jamais seule. Je suis avec toi dans chaque pensée, dans chaque sourire que tu as, dans chaque rêve que tu fais. Quand je te reverrai, je te prendrai dans mes bras et je ne te lâcherai plus jamais. Jusqu\'à ce moment-là, garde ton cœur ouvert, pense à moi, et laisse mon amour te réchauffer. Je t\'aime plus que tout, Aylie. 🤍.\n<div class="image-container"><img src="./photo_manque.jpg" alt="Quand je te manque" onerror="hideImage(this)"></div>' },
+        { id: 'manque', emoji: '🌙', title: 'Quand je te manque', password: 'roro', message: 'Mon amour, si tu avez ouvert cette enveloppe, c\'est que je te manque un peu… et crois-moi, moi aussi tu me manques terriblement. Chaque seconde loin de toi me semble interminable, chaque minute sans ton sourire est un petit morceau de journée qui manque à mon bonheur. Ferme les yeux un instant et imagine-moi là, à tes côtés, te prenant doucement la hand, te serrant fort contre moi. Je voudrais que tu sentes à quel point je tiens à toi, que tu puisses ressentir mon amour même à distance. Respire profondément… et pense à nos fous rires, nos câlins interminables, nos moments rien qu\'à nous. Chaque souvenir est un pont entre nous, et chaque pensée que j\'ai de toi me rapproche un peu plus de toi. And même si je ne peux pas être physiquement là maintenant, sache que tu n\'es jamais seule. Je suis avec toi dans chaque pensée, dans chaque sourire que tu as, dans chaque rêve que tu fais. Quand je te reverrai, je te prendrai dans mes bras et je ne te lâcherai plus jamais. Jusqu\'à ce moment-là, garde ton cœur ouvert, pense à moi, et laisse mon amour te réchauffer. Je t\'aime plus que tout, Aylie. 🤍.\n<div class="image-container"><img src="./photo_manque.jpg" alt="Quand je te manque" onerror="hideImage(this)"></div>' },
         { id: 'amour', emoji: '💌', title: 'Une lettre d\'amour', password: 'love', message: 'Mon trésor, la vraie lettre se trouve chez moi, tu l\'auras au prochain date.. en attendant sache une chose: Je t\'aime plus que tout. 💖n<div class="image-container"><img src="./photo_amour.jpg" alt="Lettre d\'amour" onerror="hideImage(this)"></div>' },
         { id: 'cauchemar', emoji: '👻', title: 'Ouvre si tu as fait un cauchemar', password: 'roroestla', message: 'Mon petit ange, Si tu as fait un cauchemar et que tu te sens encore secouée, respire profondément… je suis là avec toi, même si ce n\'est que par ces mots. Ferme les yeux un instant et imagine mes bras autour de toi, te protégeant de tout ce qui fait peur. Tu es en sécurité, toujours, et rien ne peut t\'atteindre tant que je veille sur toi. Rappelle-toi que les cauchemars sont seulement des histoires dans ton esprit, et que la réalité est douce et pleine de moi qui pense à toi. Prends ton doudou, blottis-toi dans ton lit, et pense à moi comme ton refuge. Bontôt, je serai là pour te serrer fort, chasser toutes les peurs, et te faire sourire jusqu\'à ce que le sommeil te berce tranquillement. Je t\'aime plus que tout, Aylie. 🌙' },
         { id: 'pourquoi', emoji: '💝', title: 'Ouvre pour les raisons pourquoi je t\'aime', password: 'toi', message:'Mon amour,\n\nSi tu as ouvert cette enveloppe, c\'est pour découvrir toutes les raisons qui font que je t\'aime… et elles sont infinies.\nVoici quelques-unes de mes préférées :\n\n- J\'aime ton sourire qui illumine mes journées, même les plus grises.\n- J\'aime ton rire, qui me fait fondre et qui résonne dans mon cœur.\n- J\'aime la façon dont tu prends soin de moi, toujours attentionnée et douce.\n- J\'aime tes yeux, dans lesquels je me perds et trouve la paix.\n- J\'aime ton courage et ta force, même quand la vie n\'est pas facile.\n- J\'aime la complicité que nous partageons, nos blagues, nos secrets, nos moments à deux.\n- J\'aime tout ce que tu es, simplement et profondément, et tout ce que tu fais pour rendre ma vie meilleure.\n\nEt surtout, j\'aime que tu sois toi, Aylie, unique et merveilleuse.\nCette liste pourrait continuer encore et encore, mais je veux que tu saches que chaque instant avec toi est précieux, et que mon amour pour toi grandit chaque jour. 🤍'},
@@ -894,6 +949,9 @@
                 e.preventDefault();
             }
         }, { passive: false });
+        
+        // Mettre à jour le compteur de jours
+        updateDaysCounter();
     }
 
     // Appliquer le thème
