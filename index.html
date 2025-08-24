@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pour Aylie">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iNDAiIGZpbGw9IiNGRjRENkQiLz4KPHBhdGggZD0iTTk2IDU2QzEwNy4wNDYgNTYgMTE2IDY0Ljk1NDUgMTE2IDc2QzExNiA4Ny4wNDU1IDEwNy4wNDYgOTYgOTYgOTZDODQuOTU0NSA5NiA3NiA4Ny4wNDU1IDc2IDc2Qzc2IDY0Ljk1NDUgODQuOTU0NSA1NiA5NiA1NloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik03NiAxMTJIMTE2VjE2OEg3NlYxMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+    <title>Pour Aylie 💌</title>
+    <meta name="description" content="Une petite surprise pleine d'enveloppes, juste pour toi.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg1: #ffedf3;
+            --bg2: #ffe6f0;
+            --card: rgba(255, 255, 255, 0.95);
+            --text: #2a2a2a;
+            --accent: #ff4d6d;
+            --accent-2: #7c3aed;
+            --shadow: 0 10px 25px rgba(0,0,0,0.08);
+            --radius: 20px;
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+        }
+        [data-theme="dark"] {
+            --bg1: #1a1a2e;
+            --bg2: #16213e;
+            --card: rgba(30, 30, 46, 0.95);
+            --text: #f0f0f0;
+            --shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        * { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html, body { 
+            height: 100%; 
+            overflow: hidden;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+        body {
+            color: var(--text);
+            background: radial-gradient(1200px 800px at 20% 0%, var(--bg1), var(--bg2)),
+                        radial-gradient(1000px 700px at 100% 100%, var(--bg2), var(--bg1));
+            overflow-x: hidden;
+            perspective: 1000px;
+            transition: background 0.5s ease;
+            padding-top: var(--safe-area-inset-top);
+            padding-bottom: var(--safe-area-inset-bottom);
+        }
+
+        /* --- Overlay d'accueil avec vidéo --- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            z-index: 50;
+            transition: opacity .6s ease, visibility .6s ease;
+        }
+        .overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .welcome {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        .welcome video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+        .welcome-content { 
+            z-index: 2; 
+            padding: 20px; 
+            padding-top: calc(20px + var(--safe-area-inset-top));
+        }
+        .welcome h1 { 
+            margin: 10px 0 4px; 
+            font-size: clamp(28px, 5vw, 48px); 
+        }
+        .welcome p { 
+            margin: 8px 0 22px; 
+            font-size: clamp(14px, 2.6vw, 20px); 
+            opacity: .95; 
+        }
+        .btn {
+            appearance: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 14px 24px;
+            border-radius: 999px;
+            box-shadow: var(--shadow);
+            background: linear-gradient(135deg, var(--accent), #ff7590);
+            color: white;
+            transition: transform .15s ease, filter .2s ease;
+            font-size: 18px;
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            filter: brightness(1.05); 
+        }
+        .sound-toggle {
+            position: absolute;
+            bottom: calc(20px + var(--safe-area-inset-bottom));
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* --- Contenu principal --- */
+        main {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        header { 
+            max-width: 1100px; 
+            margin: 28px auto 8px; 
+            padding: 0 16px; 
+            text-align: center; 
+            z-index: 10;
+            position: relative;
+            padding-top: calc(28px + var(--safe-area-inset-top));
+        }
+        .title {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: clamp(22px, 5vw, 36px);
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+        .subtitle { 
+            opacity: .8; 
+            font-size: 14px; 
+            margin-top: 5px;
+        }
+        .progress {
+            margin-top: 10px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* Carousel 3D amélioré - Version plus fluide */
+        .carousel-container {
+            position: relative;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-top: 20px;
+            perspective: 1400px;
+            transform-style: preserve-3d;
+        }
+
+        .carousel {
+            position: relative;
+            width: 300px;
+            height: 420px;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: transform;
+        }
+
+        .card {
+            position: absolute;
+            width: 260px;
+            height: 340px;
+            left: 0;
+            top: 0;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,.05);
+            padding: 16px;
+            display: grid;
+            gap: 10px;
+            transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
+            backface-visibility: hidden;
+            cursor: pointer;
+            transform-origin: center center -380px;
+            will-change: transform;
+        }
+
+        .card h3 { 
+            margin: 0; 
+            font-size: 18px; 
+            text-align: center;
+        }
+        .chip { 
+            font-size: 13px; 
+            opacity: .8; 
+            text-align: center;
+        }
+        .emj { 
+            font-size: 32px; 
+            line-height: 1; 
+            text-align: center;
+        }
+        .openBtn { 
+            justify-self: center; 
+            margin-top: 10px;
+        }
+
+        .envelope {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,.08);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 -8px 0 #ffe3ea;
+            margin: 0 auto;
+            transition: all 0.5s ease;
+        }
+        .envelope::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg,#ffd2df,#fff 60%);
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            border-bottom: 1px solid rgba(0,0,0,.06);
+            transition: clip-path 0.8s ease;
+            transform-origin: top;
+        }
+
+        .card.opened .envelope {
+            box-shadow: inset 0 -4px 0 #ffe3ea;
+            transform: translateY(5px);
+        }
+        .card.opened .envelope::before {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            border-bottom: none;
+            transform: rotateX(180deg);
+        }
+        .card.opened .envelope::after {
+            content: "✓";
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 2;
+        }
+
+        /* Nouveau: Coeur favori */
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 5;
+            transition: color 0.3s ease;
+        }
+        .favorite-btn.active {
+            color: var(--accent);
+        }
+        .favorite-btn:hover {
+            color: #ff7590;
+        }
+
+        /* Flèches de navigation améliorées */
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+        .nav-arrow:hover {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .nav-arrow.left {
+            left: 20px;
+        }
+        .nav-arrow.right {
+            right: 20px;
+        }
+        .nav-arrow i {
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        /* Indicateurs de position */
+        .scroll-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            z-index: 10;
+            padding-bottom: calc(20px + var(--safe-area-inset-bottom));
+        }
+        .scroll-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .scroll-indicator.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: rgba(0,0,0,.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .2s ease;
+            z-index: 60;
+            padding: 14px;
+            padding-top: calc(14px + var(--safe-area-inset-top));
+            padding-bottom: calc(14px + var(--safe-area-inset-bottom));
+        }
+        .modal.show { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        .sheet {
+            width: min(560px, 96vw);
+            background: var(--card);
+            border-radius: 18px;
+            border: 1px solid rgba(0,0,0,.08);
+            box-shadow: var(--shadow);
+            padding: 18px 16px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            max-height: calc(90vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+            overflow-y: auto;
+        }
+        .modal.show .sheet {
+            transform: scale(1);
+        }
+        .sheet h2 { 
+            margin: 6px 0 12px; 
+            text-align: center; 
+        }
+        .row { 
+            display: grid; 
+            gap: 10px; 
+        }
+        .row label { 
+            font-size: 14px; 
+            opacity: .85; 
+        }
+        .row input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,.12);
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+            font-size: 16px; /* Évite le zoom sur iOS */
+        }
+        .row .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .ghost { 
+            background: white; 
+            border: 1px solid rgba(0,0,0,.12); 
+            color: #555; 
+        }
+        .error { 
+            color: #b5002d; 
+            font-size: 13px; 
+            min-height: 18px; 
+            text-align: center; 
+        }
+        .letter {
+            background: #fff;
+            border: 1px dashed #ffd1dc;
+            border-radius: 16px;
+            padding: 20px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-size: 16px;
+            text-align: center;
+        }
+        .letter img { 
+            max-width: 100%; 
+            border-radius: 12px; 
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Nouveau: Bloc-notes */
+        .notes-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ffd1dc;
+        }
+
+        .notes-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 16px; /* Évite le zoom sur iOS */
+        }
+
+        .notes-section .btn {
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+
+        /* Bouton pour refermer l'enveloppe */
+        .close-envelope-btn {
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* Animation de confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent);
+            opacity: 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* Nouveau: Animation de lettre qui sort */
+        .letter-content {
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        .letter-appear {
+            animation: letterAppear 0.8s ease forwards;
+        }
+        @keyframes letterAppear {
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-arrow {
+                display: flex !important; /* Afficher les flèches sur mobile */
+                width: 44px;
+                height: 44px;
+                opacity: 0.8;
+            }
+            
+            .carousel {
+                transform: scale(0.85);
+            }
+            
+            .row .actions {
+                flex-direction: column;
+            }
+            
+            .sheet {
+                padding: 14px 12px;
+            }
+            
+            .btn {
+                padding: 16px 28px; /* Plus gros pour le tactile */
+            }
+        }
+
+        /* Nouveau: Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: calc(20px + var(--safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Nouveau: Effet de brillance sur les enveloppes */
+        .envelope-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.8) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card:hover .envelope-shine {
+            opacity: 0.3;
+            animation: shine 1.5s ease;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        /* Nouveau: Animation d'ouverture d'enveloppe améliorée */
+        @keyframes envelopeOpen {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(-2deg); }
+            100% { transform: translateY(5px); }
+        }
+
+        .card.opened .envelope {
+            animation: envelopeOpen 0.6s ease;
+        }
+
+        /* Nouveau: Effet de profondeur amélioré pour le carousel */
+        .card {
+            filter: brightness(var(--card-brightness, 1));
+            transform: rotateY(var(--card-rotation)) translateZ(var(--card-translate-z, 0px)) scale(var(--card-scale, 1));
+        }
+
+        .card.active {
+            --card-brightness: 1.05;
+            --card-scale: 1.05;
+            z-index: 10;
+        }
+
+        /* Optimisations pour la fluidité */
+        .carousel-smooth {
+            transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card-optimized {
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+        }
+
+        /* Nouveau: Bouton mode sombre */
+        .theme-toggle {
+            position: fixed;
+            bottom: calc(20px + var(--safe-area-inset-bottom));
+            right: 20px;
+            background: var(--card);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: var(--text);
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .theme-toggle.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        .theme-toggle i {
+            font-size: 20px;
+        }
+
+        /* Nouveau: Classe pour cacher des éléments */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Styles pour les images - AJOUTÉ */
+        .image-container {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .image-missing {
+            font-style: italic;
+            color: #999;
+            margin-top: 10px;
+            display: none; /* Caché par défaut */
+        }
+        
+        /* Prévenir le bounce/scroll sur iOS */
+        .no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Pour le mode standalone iOS */
+        .ios-standalone body {
+            height: -webkit-fill-available;
+        }
+    </style>
+</head>
+<body>
+
+<!-- OVERLAY D'ACCUEIL AVEC VIDÉO -->
+<div class="overlay" id="overlay" aria-hidden="false">
+    <div class="welcome">
+        <video autoplay loop playsinline muted id="backgroundVideo">
+            <!-- Mets ton fichier vidéo "fond.mp4" dans le même dossier -->
+            <source src="fond.mp4" type="video/mp4" />
+            Votre navigateur ne supporte pas la lecture de vidéos.
+        </video>
+        <div class="welcome-content">
+            <h1 id="wl-title">Pour Aylie 💌</h1>
+            <p id="wl-desc">Une petite bulle d'amour avec des enveloppes secrètes rien que pour toi.</p>
+            <button class="btn" id="enterBtn" aria-label="Entrer">Entrer</button>
+        </div>
+        <button class="sound-toggle" id="soundToggle">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Contenu principal -->
+<main id="mainContent">
+    <!-- en-tête -->
+    <header>
+        <div class="title">Coffret d'enveloppes pour Aylie</div>
+        <div class="subtitle">Tourne les enveloppes et ouvre celle qui te parle aujourd'hui ✨</div>
+        <div class="progress" id="progress">0/13 ouvertes</div>
+    </header>
+
+    <!-- Carousel 3D amélioré -->
+    <div class="carousel-container">
+        <button class="nav-arrow left" id="leftArrow">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <div class="carousel" id="carousel"></div>
+        
+        <button class="nav-arrow right" id="rightArrow">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <!-- Indicateurs de position -->
+    <div class="scroll-indicators" id="scrollIndicators"></div>
+</main>
+
+<!-- Modal mot de passe / lettre -->
+<div class="modal" id="modal" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <h2 id="modalTitle">Ouvrir l'enveloppe</h2>
+        <div class="row" id="passwordView">
+            <label for="pwdInput">Mot de passe</label>
+            <input type="password" id="pwdInput" autocomplete="off" />
+            <div class="error" id="error"></div>
+            <div class="actions">
+                <button class="btn ghost" id="closeModal">Fermer</button>
+                <button class="btn" id="openEnvelope">Ouvrir</button>
+            </div>
+        </div>
+        <div class="row" id="letterView" style="display:none">
+            <div class="letter-content">
+                <div class="letter" id="letterText"></div>
+            </div>
+            <div class="actions">
+                <button class="btn ghost" id="closeLetter">Fermer</button>
+                <button class="btn close-envelope-btn" id="resetEnvelope">Refermer l'enveloppe</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Bouton mode sombre - initialement caché -->
+<button class="theme-toggle" id="themeToggle" aria-label="Changer de thème">
+    <i class="fas fa-moon"></i>
+</button>
+
+<script>
+    // Détection iOS et mode standalone
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isInStandaloneMode = window.navigator.standalone === true;
+
+    if (isIOS && isInStandaloneMode) {
+        document.body.classList.add('ios-standalone');
+    }
+
+    const ENVELOPES = [
+        { id: 'mauvaise', emoji: '😔', title: 'Quand tu as eu une mauvaise journée', password: 'courage', message: 'Mon cœur, je sais que ta journée d\'aujourd\'hui n\'a pas été comme tu l\'aurais souhaitée, et tu sais quoi ? C\'est ok. Dans la vie, il y a souvent des jours pas cool, un peu lourds, et puis heureusement, il y a aussi les jours super sympas… comme nos dates, nos moments où on rigole comme des fous et où plus rien d\'autre n\'existe. Comme d\'habitude, on va s\'appeler ce soir, mon ange, et j\'espère que ça compensera un peu cette journée merdique que tu as passée. Parce que j\'adore ces moments avec toi, même si ce n\'est que par la voix, ça me rapproche de toi. Je ne sais pas ce qui s\'est passé exactement… une mauvaise journée de cours, une embrouille avec Diane, ou peut-être Lina qui fait sa maline 😏… Peu importe. Ce n\'est pas grave. Tout ça, c\'est derrière toi maintenant. Le passé reste le passé, et tu n\'as pas besoin d\'y repenser. Ce que jvaimerais, c\'est que tu respires un coup, que tu relâches la pression et que tu penses à moi, à nous. Parce que moi, je pense à toi tout le temps, et je veux que tu gardes en tête que tu n’es jamais seule, peu importe à quel point la journée a été pourrie. Tu es mon rayon de soleil même quand le ciel est gris, Aylie. 🌙🤍' },
+        { id: 'triste', emoji: '🌧️', title: 'Quand tu es triste', password: 'soleil', message: 'Mon amour, je sais que parfois tu te sens triste, que ton cœur se serre et que les larmes veulent couler toutes seules. Et ça me fait mal de savoir que tu traverses ces moments-là sans que je sois directement à côté de toi. J\'aimerais pouvoir tendre la hand, essuyer chaque larme et t\'enlacer jusqu\'à ce que ton sourire revienne. Parce que ton sourire, Aylie, c\'est la plus belle chose au monde pour moi, et je veux qu\'il brille même dans les journées les plus grises. Tu sais, être triste, c\'est normal. On a tous nos moments de doute et de fatigue. Mais n\'oublie jamais que je suis là, même si ce n\'est pas physiquement. Ferme les yeux et pense à moi, à mes bras autour de toi, à ma voix qui te dit doucement : « Ça va aller, mon cœur. » Et si jamais tu as besoin de parler, peu importe l\'heure ou l\'endroit, je serai toujours la personne qui décroche pour toi. Parce que tes émotions comptent pour moi, et je veux être ton refuge quand le monde semble trop lourd. Tu n\'es pas seule, je t\'aime fort. CLIQUE SUR CE LIEN: https://mewtru.com/mixtape/playback?v=V9PVRfjEBTI%2CuzS3WG6__G4%2COpK12KUzUW0%2CFL1Vf0pvkHw&to=Aylie' },
+        { id: 'calin', emoji: '🤗', title: 'Quand tu as besoin d\'un câlin', password: 'hug', message: 'Mon petit ange, si tu as ouvert cette enveloppe, c\'est que tu as besoin d\'un câlin… et tu sais à quel point j\'aimerais être là pour t\'en donner un. Quand je te reverrai, prépare-toi : je vais t\'étouffer dans mes bras tellement mon câlin sera puissant et rempli de tout l\'amour que je garde pour toi. Je te tiendrai si fort que tu n\'auras plus aucun doute, plus aucune peur, juste la chaleur rassurante de mon cœur contre le tien. En attendant ce moment, tu peux te blottir dans un de mes t-shirts, sentir un peu mon odeur, et serrer contre toi le petit nounours que je t\'ai offert. Ce n\'est pas la même chose que mes bras, mais c\'est un petit morceau de moi qui veille sur toi quand je ne suis pas là. Ferme les yeux, respire doucement… et imagine mes bras autour de toi. Tu es en sécurité, toujours,je t\'aime fort❤️​'},
+        { id: 'ennui', emoji: '😴', title: 'Quand tu t\'ennuies', password: 'fun', message: 'Mon petit coeur, si tu t\'ennuies en ce moment, n\'hésite pas : appelle-moi tout de suite ! On pourra se regarder un film sur Xalaflix, comme on adore le faire, ou bien lancer une partie de Uno sur Plato. Même if on n\'est pas dans la même pièce, ces moments partagés me rapprochent de toi et me font sourire rien qu\'en pensant à toi. Alors ne laisse pas l\'ennui s\'installer, prends ton téléphone, et on va transformer ce moment en rigolade, en complicité, en souvenirs qu\'on pourra raconter plus tard. Je suis là pour toi, même dans les moments tranquilles ou un peu longs. 🤍' },
+        { id: 'manque', emoji: '🌙', title: 'Quand je te manque', password: 'roro', message: 'Mon amour, si tu as ouvert cette enveloppe, c\'est que je te manque un peu… et crois-moi, moi aussi tu me manques terriblement. Chaque seconde loin de toi me semble interminable, chaque minute sans ton sourire est un petit morceau de journée qui manque à mon bonheur. Ferme les yeux un instant et imagine-moi là, à tes côtés, te prenant doucement la main, te serrant fort contre moi. Je voudrais que tu sentes à quel point je tiens à toi, que tu puisses ressentir mon amour même à distance. Respire profondément… et pense à nos fous rires, nos câlins interminables, nos moments rien qu\'à nous. Chaque souvenir est un pont entre nous, et chaque pensée que j\'ai de toi me rapproche un peu plus de toi. Et même si je ne peux pas être physiquement là maintenant, sache que tu n\'es jamais seule. Je suis avec toi dans chaque pensée, dans chaque sourire que tu as, dans chaque rêve que tu fais. Quand je te reverrai, je te prendrai dans mes bras et je ne te lâcherai plus jamais. Jusqu\'à ce moment-là, garde ton cœur ouvert, pense à moi, et laisse mon amour te réchauffer. Je t\'aime plus que tout, Aylie. 🤍.\n<div class="image-container"><img src="./photo_manque.jpg" alt="Quand je te manque" onerror="hideImage(this)"></div>' },
+        { id: 'amour', emoji: '💌', title: 'Une lettre d\'amour', password: 'love', message: 'Mon trésor, la vraie lettre se trouve chez moi, tu l\'auras au prochain date.. en attendant sache une chose: Je t\'aime plus que tout. 💖n<div class="image-container"><img src="./photo_amour.jpg" alt="Lettre d\'amour" onerror="hideImage(this)"></div>' },
+        { id: 'cauchemar', emoji: '👻', title: 'Ouvre si tu as fait un cauchemar', password: 'roroestla', message: 'Mon petit ange, Si tu as fait un cauchemar et que tu te sens encore secouée, respire profondément… je suis là avec toi, même si ce n\'est que par ces mots. Ferme les yeux un instant et imagine mes bras autour de toi, te protégeant de tout ce qui fait peur. Tu es en sécurité, toujours, et rien ne peut t\'atteindre tant que je veille sur toi. Rappelle-toi que les cauchemars sont seulement des histoires dans ton esprit, et que la réalité est douce et pleine de moi qui pense à toi. Prends ton doudou, blottis-toi dans ton lit, et pense à moi comme ton refuge. Bientôt, je serai là pour te serrer fort, chasser toutes les peurs, et te faire sourire jusqu\'à ce que le sommeil te berce tranquillement. Je t\'aime plus que tout, Aylie. 🌙' },
+        { id: 'pourquoi', emoji: '💝', title: 'Ouvre pour les raisons pourquoi je t\'aime', password: 'toi', message:'Mon amour,\n\nSi tu as ouvert cette enveloppe, c\'est pour découvrir toutes les raisons qui font que je t\'aime… et elles sont infinies.\nVoici quelques-unes de mes préférées :\n\n- J\'aime ton sourire qui illumine mes journées, même les plus grises.\n- J\'aime ton rire, qui me fait fondre et qui résonne dans mon cœur.\n- J\'aime la façon dont tu prends soin de moi, toujours attentionnée et douce.\n- J\'aime tes yeux, dans lesquels je me perds et trouve la paix.\n- J\'aime ton courage et ta force, même quand la vie n\'est pas facile.\n- J\'aime la complicité que nous partageons, nos blagues, nos secrets, nos moments à deux.\n- J\'aime tout ce que tu es, simplement et profondément, et tout ce que tu fais pour rendre ma vie meilleure.\n\nEt surtout, j\'aime que tu sois toi, Aylie, unique et merveilleuse.\nCette liste pourrait continuer encore et encore, mais je veux que tu saches que chaque instant avec toi est précieux, et que mon amour pour toi grandit chaque jour. 🤍'},
+        // Nouvelles lettres ajoutées
+        { id: 'fache', emoji: '😠', title: 'Quand on s\'est fâché', password: 'pardon', message: 'Ma princesse,\n\nParfois, on se fâche, et c\'est normal dans un couple. Ces petites disputes font partie du jeu, même si elles peuvent être désagréables sur le moment.\n\nMais malgré tout cela, je t\'aime toujours autant, Aylie. Chaque désaccord nous apprend quelque chose, et chaque réconciliation nous rend plus forts ensemble.\nOn s\'est toujours relevés après, et on apprend à mieux se connaître à chaque fois.\n\nAlors prends une grande respiration, pense à tout le positif qu\'on partage, et souviens-toi que je serai toujours là, même après une petite tempête. Je t\'aime fort❤️' },
+        { id: 'joyeuse', emoji: '😄', title: 'Quand tu es joyeuse', password: 'bonheur', message: 'Chaton,\n\nQuand tu es joyeuse, mon cœur danse avec le tien. Ta bonne humeur est contagieuse et illumine ma journée, même à distance.\n\nJ\'adore te voir sourire, rire aux éclats, et profiter de chaque petit moment. Ces instants me rappellent combien je suis chanceux de t\'avoir dans ma vie.\n\nContinue de rayonner, Aylie. Ton bonheur me rend heureux, et je veux toujours être là pour partager ces moments de joie avec toi.🌈' },
+        { id: 'malade', emoji: '🤒', title: 'Quand tu es malade', password: 'rorotonmedicament', message: ' Ma chérie, \n\nSi tu es malade, je voudrais pouvoir être à tes côtés tout de suite pour te prendre dans mes bras et te réconforter.\n\nDès que je peux, je passerai t\'apporter des fleurs, peut-être des tulipes ou des roses, juste pour te voir sourire un peu plus malgré ce moment difficile.\n\nPrends soin de toi, repose-toi bien, et souviens-toi que je pense à toi à chaque instant. Je serai là pour te chouchouter et te faire sentir mieux. 🍵' },
+        { id: 'stresse', emoji: '😰', title: 'Quand tu es stressée', password: 'respirejesuisla', message: ' Chaton d\'amour,\n\nSi tu te sens stressée, prends un instant pour respirer profondément. Inspire lentement, expire doucement… laisse ton corps se détendre un peu à chaque souffle.\n\nEt surtout, n\'hésite pas à m\'appeler. Je suis là pour toi, pour t\'écouter, te soutenir et te rappeler que tout ira bien.\n\nN\'oublie pas ton roll-on à la lavande que je t\'ai acheté : un petit parfum apaisant pour t\'aider à relâcher la tension. Blottie dans ce parfum et dans mes mots, j\'espère que tu te sentiras un peu plus légère.🌿' },
+        { id: 'seule', emoji: '👤', title: 'Quand tu te sens seule', password: 'mettamainsurtoncoeur', message: '`Mon amour,\n\nSi tu te sens seule en ce moment, ouvre cette enveloppe et laisse-moi te rappeler que tu n\'es jamais vraiment seule. Même quand je ne suis pas physiquement à tes côtés, mon cœur est toujours avec toi.\n\nImagine-moi près de toi, te tenant la hand, te murmurant que tout ira bien. Ressens mon étreinte invisible qui te réchauffe et te protège.\n\nPrends une grande inspiration et pense à tous nos moments partagés : nos fous rires, nos câlins, nos secrets, nos petites habitudes qui rendent notre amour unique. Chaque souvenir est un pont entre nous.\n\nJe suis toujours là pour toi, même dans les moments de solitude. Tu es ma lumière, mon trésor, et je t\'aime infiniment.APPELLE MOIIII 🤍' },
+        { id: 'bac', emoji: '🎓', title: 'Pour le BAC', password: 'reussite', message: '`Mon amour,\n\nNe t\'inquiète pas pour le BAC, tu vas y arriver ! Tu as bien révisé et tu es prête. Respire profondément et ne laisse pas le stress t\'envahir.\n\nJe t\'ai bien fait réviser la philo, et je sais que tu es capable de gérer toutes les matières avec brio.\n\nCrois en toi, fais confiance à ton travail et souviens-toi que je suis là pour te soutenir, peu importe le résultat. Tu es brillante et je suis fier de toi. 📚' }
+    ];
+
+    // Variables globales
+    const unlocked = new Set(JSON.parse(localStorage.getItem('unlocked') || '[]'));
+    const favorites = new Set(JSON.parse(localStorage.getItem('favorites') || '[]'));
+    const notes = JSON.parse(localStorage.getItem('notes') || '{}');
+    const carousel = document.getElementById('carousel');
+    const mainContent = document.getElementById('mainContent');
+    const videoElement = document.getElementById('backgroundVideo');
+    const soundToggle = document.getElementById('soundToggle');
+    const leftArrow = document.getElementById('leftArrow');
+    const rightArrow = document.getElementById('rightArrow');
+    const scrollIndicators = document.getElementById('scrollIndicators');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const passwordView = document.getElementById('passwordView');
+    const letterView = document.getElementById('letterView');
+    const pwdInput = document.getElementById('pwdInput');
+    const error = document.getElementById('error');
+    const letterText = document.getElementById('letterText');
+    const progressElement = document.getElementById('progress');
+    const toast = document.getElementById('toast');
+    const themeToggle = document.getElementById('themeToggle');
+    let currentAngle = 0;
+    let currentId = null;
+    let currentIndex = 0;
+    let isRotating = false;
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    // Fonction pour cacher les images manquantes - CORRIGÉE
+    function hideImage(img) {
+        img.style.display = 'none';
+        const container = img.parentElement;
+        const missingMessage = container.querySelector('.image-missing');
+        if (missingMessage) {
+            missingMessage.style.display = 'block';
+        }
+    }
+
+    // Initialisation
+    function init() {
+        // Appliquer le thème sauvegardé
+        applyTheme(currentTheme);
+        
+        // Cacher le bouton de thème au chargement initial
+        themeToggle.classList.remove('visible');
+        
+        renderEnvelopes();
+        setupEventListeners();
+        createScrollIndicators();
+        updateCarousel();
+        updateProgress();
+        
+        // Prévenir le scroll sur iOS
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
+
+    // Appliquer le thème
+    function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : '');
+        themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', theme);
+    }
+
+    // Création des enveloppes dans le carousel 3D
+    function renderEnvelopes() {
+        carousel.innerHTML = '';
+        
+        ENVELOPES.forEach((env, index) => {
+            const isOpened = unlocked.has(env.id);
+            const isFavorite = favorites.has(env.id);
+            const card = document.createElement('article');
+            card.className = `card card-optimized ${isOpened ? 'opened' : ''}`;
+            card.dataset.id = env.id;
+            card.dataset.index = index;
+            card.innerHTML = `
+                <div class="envelope-shine"></div>
+                <button class="favorite-btn ${isFavorite ? 'active' : ''}" aria-label="Marquer comme favori">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <div class="chip">${env.emoji} Enveloppe</div>
+                <div class="envelope" aria-hidden="true"></div>
+                <h3>${env.title}</h3>
+                <button class="btn openBtn">${isOpened ? 'Lire à nouveau' : 'Ouvrir'}</button>
+            `;
+            carousel.appendChild(card);
+        });
+    }
+
+    // Mise à jour de la progression
+    function updateProgress() {
+        progressElement.textContent = `${unlocked.size}/${ENVELOPES.length} ouvertes`;
+    }
+
+    // Afficher une notification toast
+    function showToast(message, duration = 3000) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    // Configuration des écouteurs d'événements
+    function setupEventListeners() {
+        // Entrée dans le site
+        document.getElementById('enterBtn').addEventListener('click', enterSite);
+        
+        // Gestion du son
+        soundToggle.addEventListener('click', toggleSound);
+        
+        // Navigation par flèches
+        leftArrow.addEventListener('click', () => {
+            if (isRotating) return;
+            rotateCarousel('left');
+        });
+        rightArrow.addEventListener('click', () => {
+            if (isRotating) return;
+            rotateCarousel('right');
+        });
+        
+        // Navigation au clavier
+        window.addEventListener('keydown', (e) => {
+            if (isRotating) return;
+            
+            if (e.key === 'ArrowLeft') {
+                rotateCarousel('left');
+            }
+            if (e.key === 'ArrowRight') {
+                rotateCarousel('right');
+            }
+            if (e.key === 'Escape') closeModal();
+        });
+        
+        // Bouton de changement de thème
+        themeToggle.addEventListener('click', () => {
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            currentTheme = newTheme;
+            applyTheme(newTheme);
+            showToast(`Mode ${newTheme === 'dark' ? 'sombre' : 'clair'} activé`);
+        });
+        
+        // Ouverture des enveloppes
+        carousel.addEventListener('click', (e) => {
+            // Gestion des favoris
+            if (e.target.closest('.favorite-btn')) {
+                const btn = e.target.closest('.favorite-btn');
+                const card = e.target.closest('.card');
+                const id = card.dataset.id;
+                
+                if (favorites.has(id)) {
+                    favorites.delete(id);
+                    btn.classList.remove('active');
+                    showToast('Retiré des favoris');
+                } else {
+                    favorites.add(id);
+                    btn.classList.add('active');
+                    showToast('Ajouté aux favoris 💖');
+                }
+                
+                localStorage.setItem('favorites', JSON.stringify(Array.from(favorites)));
+                return;
+            }
+            
+            const btn = e.target.closest('.openBtn');
+            if (!btn) return;
+            
+            const card = e.target.closest('.card');
+            const id = card.dataset.id;
+            const env = ENVELOPES.find(x => x.id === id);
+            currentId = id;
+            
+            if (unlocked.has(id)) {
+                showLetter(env.message);
+                openModal();
+            } else {
+                modalTitle.textContent = `Ouvrir: ${env.title}`;
+                error.textContent = '';
+                showPassword();
+                openModal();
+                setTimeout(() => pwdInput.focus(), 10);
+            }
+        });
+        
+        // Gestion de la modal
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('closeLetter').addEventListener('click', closeModal);
+        document.getElementById('openEnvelope').addEventListener('click', openEnvelopeHandler);
+        document.getElementById('resetEnvelope').addEventListener('click', resetEnvelopeHandler);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        
+        // Soumission du mot de passe avec Entrée
+        pwdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('openEnvelope').click();
+            }
+        });
+        
+        // Navigation par swipe sur mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        carousel.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        carousel.addEventListener('touchend', e => {
+            if (isRotating) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const diff = touchStartX - touchEndX;
+            const swipeThreshold = 50;
+            
+            if (diff > swipeThreshold) {
+                rotateCarousel('right');
+            } else if (diff < -swipeThreshold) {
+                rotateCarousel('left');
+            }
+        }
+    }
+
+    // Création des indicateurs de position
+    function createScrollIndicators() {
+        scrollIndicators.innerHTML = '';
+        
+        for (let i = 0; i < ENVELOPES.length; i++) {
+            const indicator = document.createElement('div');
+            indicator.className = `scroll-indicator ${i === 0 ? 'active' : ''}`;
+            indicator.addEventListener('click', () => {
+                if (isRotating) return;
+                
+                const targetIndex = i;
+                const diff = targetIndex - currentIndex;
+                currentAngle -= diff * (360 / ENVELOPES.length);
+                currentIndex = targetIndex;
+                updateCarousel();
+            });
+            scrollIndicators.appendChild(indicator);
+        }
+    }
+
+    // Mise à jour de l'affichage du carousel - OPTIMISÉE
+    function updateCarousel() {
+        const cards = carousel.querySelectorAll('.card');
+        const angleStep = 360 / ENVELOPES.length;
+        
+        // Pré-calcul des valeurs pour optimisation
+        const z = 380; // Rayon du cercle
+        
+        cards.forEach((card, index) => {
+            const angle = currentAngle + index * angleStep;
+            const normalizedAngle = ((angle % 360) + 360) % 360; // Normaliser entre 0 et 360
+            
+            // Calculer la position 3D pour un effet circulaire
+            const x = Math.sin(angle * Math.PI / 180) * z;
+            const zTrans = Math.cos(angle * Math.PI / 180) * z - z;
+            
+            // Calculer l'opacité et l'échelle en fonction de la position
+            let opacity = 1;
+            let scale = 1;
+            let zIndex = 100;
+            
+            // Réduire l'opacité et l'échelle pour les cartes sur les côtés
+            if (normalizedAngle > 90 && normalizedAngle < 270) {
+                const diff = normalizedAngle <= 180 ? normalizedAngle - 90 : 270 - normalizedAngle;
+                opacity = 1 - (diff / 90) * 0.8;
+                scale = 1 - (diff / 90) * 0.3;
+                zIndex = 50;
+            }
+            
+            // Utilisation de translate3d pour acceleration matérielle
+            card.style.transform = `
+                rotateY(${angle}deg) 
+                translate3d(${x}px, 0, ${zTrans}px)
+                scale(${scale})
+            `;
+            
+            // Appliquer l'opacité
+            card.style.opacity = opacity;
+            card.style.zIndex = zIndex;
+            
+            // Mise à jour de l'état actif
+            const isActive = Math.abs(normalizedAngle) < angleStep/2 || Math.abs(normalizedAngle) > 360 - angleStep/2;
+            card.classList.toggle('active', isActive);
+        });
+        
+        // Mise à jour des indicateurs
+        const indicators = document.querySelectorAll('.scroll-indicator');
+        const activeIndicator = Math.round(((-currentAngle % 360) / 360) * ENVELOPES.length) % ENVELOPES.length;
+        const activeIndex = activeIndicator >= 0 ? activeIndicator : activeIndicator + ENVELOPES.length;
+        
+        indicators.forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === activeIndex);
+        });
+        
+        currentIndex = activeIndex;
+        
+        // Fin de la rotation
+        setTimeout(() => {
+            isRotating = false;
+            carousel.classList.remove('carousel-smooth');
+        }, 700);
+    }
+
+    // Rotation du carousel - OPTIMISÉE
+    function rotateCarousel(direction) {
+        isRotating = true;
+        carousel.classList.add('carousel-smooth');
+        
+        const angleStep = 360 / ENVELOPES.length;
+        currentAngle += direction === 'left' ? angleStep : -angleStep;
+        updateCarousel();
+    }
+
+    // Entrée dans le site - MODIFIÉE
+    function enterSite() {
+        const overlay = document.getElementById('overlay');
+        overlay.classList.add('hidden');
+        mainContent.classList.add('visible');
+        
+        // Afficher le bouton de changement de thème
+        themeToggle.classList.add('visible');
+        
+        // Couper le son de la vidéo
+        videoElement.muted = true;
+        const icon = soundToggle.querySelector('i');
+        icon.className = 'fas fa-volume-mute';
+    }
+
+    // Basculer le son
+    function toggleSound() {
+        videoElement.muted = !videoElement.muted;
+        const icon = soundToggle.querySelector('i');
+        icon.className = videoElement.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+    }
+
+    // Ouvrir la modal
+    function openModal(){
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+    }
+
+    // Fermer la modal
+    function closeModal(){
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        pwdInput.value='';
+        error.textContent='';
+        document.body.classList.remove('no-scroll');
+    }
+
+    // Afficher la vue mot de passe
+    function showPassword(){ 
+        passwordView.style.display = ''; 
+        letterView.style.display = 'none'; 
+    }
+
+    // Afficher la lettre avec le bloc-notes
+    function showLetter(text){ 
+        passwordView.style.display = 'none'; 
+        letterView.style.display = ''; 
+        
+        const currentNote = notes[currentId] || '';
+        
+        letterText.innerHTML = `
+            <div class="letter-message">${text}</div>
+            <div class="notes-section">
+                <h4>Ton carnet de sentiments</h4>
+                <textarea id="notesInput" placeholder="Écris ici ce que tu ressens...">${currentNote}</textarea>
+                <button class="btn" id="saveNotes">Enregistrer</button>
+            </div>
+        `;
+        
+        // Ajouter l'événement pour sauvegarder les notes
+        document.getElementById('saveNotes').addEventListener('click', saveNotes);
+        
+        // Animation d'apparition de la lettre
+        const letterContent = document.querySelector('.letter-content');
+        letterContent.classList.remove('letter-appear');
+        setTimeout(() => {
+            letterContent.classList.add('letter-appear');
+        }, 10);
+    }
+
+    // Sauvegarder les notes
+    function saveNotes() {
+        const notesInput = document.getElementById('notesInput');
+        notes[currentId] = notesInput.value;
+        localStorage.setItem('notes', JSON.stringify(notes));
+        showToast('Note enregistrée 💾');
+    }
+
+    // Gestionnaire d'ouverture d'enveloppe
+    function openEnvelopeHandler() {
+        const env = ENVELOPES.find(x => x.id === currentId);
+        const input = pwdInput.value.trim();
+        
+        if (normalize(input) === normalize(env.password)) {
+            // Marquage comme ouvert
+            unlocked.add(env.id);
+            localStorage.setItem('unlocked', JSON.stringify(Array.from(unlocked)));
+            
+            // Mise à jour de l'interface
+            const card = carousel.querySelector(`.card[data-id="${env.id}"]`);
+            card.classList.add('opened');
+            const btn = card.querySelector('.openBtn');
+            btn.textContent = 'Lire à nouveau';
+            
+            // Mise à jour de la progression
+            updateProgress();
+            
+            // Affichage de la lettre avec bloc-notes
+            showLetter(env.message);
+            
+            // Animation de confetti
+            createConfetti();
+        } else {
+            error.textContent = 'Mince… ce n\'est pas le bon mot de passe.';
+            const sheet = document.querySelector('.sheet');
+            sheet.animate([
+                { transform: 'translateX(0)' },
+                { transform: 'translateX(-6px)' },
+                { transform: 'translateX(6px)' },
+                { transform: 'translateX(0)' }
+            ], { duration: 180, iterations: 1 });
+        }
+    }
+
+    // Gestionnaire pour refermer une enveloppe
+    function resetEnvelopeHandler() {
+        if (confirm("Veux-tu vraiment refermer cette enveloppe ? Tu devras à nouveau entrer le mot de passe pour la rouvrir.")) {
+            unlocked.delete(currentId);
+            localStorage.setItem('unlocked', JSON.stringify(Array.from(unlocked)));
+            
+            // Mise à jour de l'interface
+            const card = carousel.querySelector(`.card[data-id="${currentId}"]`);
+            card.classList.remove('opened');
+            const btn = card.querySelector('.openBtn');
+            btn.textContent = 'Ouvrir';
+            
+            // Mise à jour de la progression
+            updateProgress();
+            
+            closeModal();
+        }
+    }
+
+    // Normalisation du texte pour la comparaison
+    function normalize(s){ 
+        return s.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'');
+    }
+
+    // Animation de confetti
+    function createConfetti() {
+        const colors = ['#ff4d6d', '#7c3aed', '#ff7590', '#ff9aae', '#c084fc'];
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.width = (5 + Math.random() * 10) + 'px';
+            confetti.style.height = (5 + Math.random() * 10) + 'px';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            
+            document.body.appendChild(confetti);
+            
+            const animation = confetti.animate([
+                { 
+                    opacity: 1,
+                    transform: 'translateY(-20px) translateX(0) rotate(0deg)',
+                },
+                { 
+                    opacity: 0,
+                    transform: `translateY(${window.innerHeight}px) translateX(${Math.random() * 200 - 100}px) rotate(${Math.random() * 360}deg)`,
+                }
+            ], {
+                duration: 1000 + Math.random() * 2000,
+                easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+            });
+            
+            animation.onfinish = () => confetti.remove();
+        }
+    }
+
+    // Initialisation au chargement
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Gestionnaire pour éviter le zoom sur iOS
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+</script>
+
+</body>
+</html>
