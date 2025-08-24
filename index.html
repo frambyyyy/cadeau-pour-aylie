@@ -52,7 +52,6 @@
             padding-bottom: var(--safe-area-inset-bottom);
         }
 
-        /* --- Overlay d'accueil avec vidéo --- */
         .overlay {
             position: fixed;
             inset: 0;
@@ -130,7 +129,6 @@
             z-index: 10;
         }
 
-        /* --- Contenu principal --- */
         main {
             opacity: 0;
             transform: translateY(20px);
@@ -172,7 +170,6 @@
             opacity: 0.7;
         }
 
-        /* Carousel 3D amélioré - Version plus fluide */
         .carousel-container {
             position: relative;
             flex: 1;
@@ -283,7 +280,6 @@
             z-index: 2;
         }
 
-        /* Nouveau: Coeur favori */
         .favorite-btn {
             position: absolute;
             top: 10px;
@@ -303,7 +299,6 @@
             color: #ff7590;
         }
 
-        /* Flèches de navigation améliorées */
         .nav-arrow {
             position: absolute;
             top: 50%;
@@ -338,7 +333,6 @@
             color: var(--accent);
         }
 
-        /* Indicateurs de position */
         .scroll-indicators {
             display: flex;
             justify-content: center;
@@ -360,7 +354,6 @@
             transform: scale(1.2);
         }
 
-        /* Modal */
         .modal {
             position: fixed;
             inset: 0;
@@ -413,7 +406,7 @@
             border: 1px solid rgba(0,0,0,.12);
             outline: none;
             box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
-            font-size: 16px; /* Évite le zoom sur iOS */
+            font-size: 16px;
         }
         .row .actions {
             display: flex;
@@ -449,7 +442,6 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        /* Nouveau: Bloc-notes */
         .notes-section {
             margin-top: 20px;
             padding-top: 15px;
@@ -473,7 +465,7 @@
             font-family: inherit;
             margin-bottom: 10px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-            font-size: 16px; /* Évite le zoom sur iOS */
+            font-size: 16px;
         }
 
         .notes-section .btn {
@@ -481,7 +473,6 @@
             padding: 10px 16px;
         }
 
-        /* Bouton pour refermer l'enveloppe */
         .close-envelope-btn {
             background: rgba(0,0,0,0.05);
             border: 1px solid rgba(0,0,0,0.1);
@@ -489,7 +480,6 @@
             margin-top: 15px;
         }
 
-        /* Animation de confetti */
         .confetti {
             position: fixed;
             width: 10px;
@@ -500,7 +490,6 @@
             pointer-events: none;
         }
 
-        /* Nouveau: Animation de lettre qui sort */
         .letter-content {
             position: relative;
             transition: all 0.5s ease;
@@ -513,10 +502,9 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .nav-arrow {
-                display: flex !important; /* Afficher les flèches sur mobile */
+                display: flex !important;
                 width: 44px;
                 height: 44px;
                 opacity: 0.8;
@@ -535,11 +523,10 @@
             }
             
             .btn {
-                padding: 16px 28px; /* Plus gros pour le tactile */
+                padding: 16px 28px;
             }
         }
 
-        /* Nouveau: Toast notifications */
         .toast {
             position: fixed;
             bottom: calc(20px + var(--safe-area-inset-bottom));
@@ -558,7 +545,6 @@
             opacity: 1;
         }
 
-        /* Nouveau: Effet de brillance sur les enveloppes */
         .envelope-shine {
             position: absolute;
             top: -50%;
@@ -587,7 +573,6 @@
             100% { transform: translateX(100%) rotate(30deg); }
         }
 
-        /* Nouveau: Animation d'ouverture d'enveloppe améliorée */
         @keyframes envelopeOpen {
             0% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-10px) rotate(-2deg); }
@@ -598,7 +583,6 @@
             animation: envelopeOpen 0.6s ease;
         }
 
-        /* Nouveau: Effet de profondeur amélioré pour le carousel */
         .card {
             filter: brightness(var(--card-brightness, 1));
             transform: rotateY(var(--card-rotation)) translateZ(var(--card-translate-z, 0px)) scale(var(--card-scale, 1));
@@ -610,7 +594,6 @@
             z-index: 10;
         }
 
-        /* Optimisations pour la fluidité */
         .carousel-smooth {
             transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
         }
@@ -621,7 +604,6 @@
             will-change: transform, opacity;
         }
 
-        /* Nouveau: Bouton mode sombre */
         .theme-toggle {
             position: fixed;
             bottom: calc(20px + var(--safe-area-inset-bottom));
@@ -653,12 +635,10 @@
             font-size: 20px;
         }
 
-        /* Nouveau: Classe pour cacher des éléments */
         .hidden {
             display: none !important;
         }
 
-        /* Styles pour les images - AJOUTÉ */
         .image-container {
             margin: 15px 0;
             text-align: center;
@@ -674,10 +654,9 @@
             font-style: italic;
             color: #999;
             margin-top: 10px;
-            display: none; /* Caché par défaut */
+            display: none;
         }
         
-        /* Prévenir le bounce/scroll sur iOS */
         .no-scroll {
             overflow: hidden;
             position: fixed;
@@ -685,9 +664,41 @@
             height: 100%;
         }
         
-        /* Pour le mode standalone iOS */
         .ios-standalone body {
             height: -webkit-fill-available;
+        }
+
+        /* CORRECTIF POUR DÉFILEMENT - AJOUTEZ CES STYLES */
+        .letter-message {
+            max-height: 50vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 5px;
+        }
+
+        .letter-message::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .letter-message::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 77, 109, 0.5);
+            border-radius: 10px;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            .letter-message {
+                max-height: 40vh;
+            }
+            
+            .sheet {
+                max-height: 80vh;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .letter-message {
+                max-height: 35vh;
+            }
         }
     </style>
 </head>
@@ -697,7 +708,6 @@
 <div class="overlay" id="overlay" aria-hidden="false">
     <div class="welcome">
         <video autoplay loop playsinline muted id="backgroundVideo">
-            <!-- Mets ton fichier vidéo "fond.mp4" dans le même dossier -->
             <source src="fond.mp4" type="video/mp4" />
             Votre navigateur ne supporte pas la lecture de vidéos.
         </video>
@@ -787,9 +797,8 @@
         { id: 'ennui', emoji: '😴', title: 'Quand tu t\'ennuies', password: 'fun', message: 'Mon petit coeur, si tu t\'ennuies en ce moment, n\'hésite pas : appelle-moi tout de suite ! On pourra se regarder un film sur Xalaflix, comme on adore le faire, ou bien lancer une partie de Uno sur Plato. Même if on n\'est pas dans la même pièce, ces moments partagés me rapprochent de toi et me font sourire rien qu\'en pensant à toi. Alors ne laisse pas l\'ennui s\'installer, prends ton téléphone, et on va transformer ce moment en rigolade, en complicité, en souvenirs qu\'on pourra raconter plus tard. Je suis là pour toi, même dans les moments tranquilles ou un peu longs. 🤍' },
         { id: 'manque', emoji: '🌙', title: 'Quand je te manque', password: 'roro', message: 'Mon amour, si tu as ouvert cette enveloppe, c\'est que je te manque un peu… et crois-moi, moi aussi tu me manques terriblement. Chaque seconde loin de toi me semble interminable, chaque minute sans ton sourire est un petit morceau de journée qui manque à mon bonheur. Ferme les yeux un instant et imagine-moi là, à tes côtés, te prenant doucement la main, te serrant fort contre moi. Je voudrais que tu sentes à quel point je tiens à toi, que tu puisses ressentir mon amour même à distance. Respire profondément… et pense à nos fous rires, nos câlins interminables, nos moments rien qu\'à nous. Chaque souvenir est un pont entre nous, et chaque pensée que j\'ai de toi me rapproche un peu plus de toi. Et même si je ne peux pas être physiquement là maintenant, sache que tu n\'es jamais seule. Je suis avec toi dans chaque pensée, dans chaque sourire que tu as, dans chaque rêve que tu fais. Quand je te reverrai, je te prendrai dans mes bras et je ne te lâcherai plus jamais. Jusqu\'à ce moment-là, garde ton cœur ouvert, pense à moi, et laisse mon amour te réchauffer. Je t\'aime plus que tout, Aylie. 🤍.\n<div class="image-container"><img src="./photo_manque.jpg" alt="Quand je te manque" onerror="hideImage(this)"></div>' },
         { id: 'amour', emoji: '💌', title: 'Une lettre d\'amour', password: 'love', message: 'Mon trésor, la vraie lettre se trouve chez moi, tu l\'auras au prochain date.. en attendant sache une chose: Je t\'aime plus que tout. 💖n<div class="image-container"><img src="./photo_amour.jpg" alt="Lettre d\'amour" onerror="hideImage(this)"></div>' },
-        { id: 'cauchemar', emoji: '👻', title: 'Ouvre si tu as fait un cauchemar', password: 'roroestla', message: 'Mon petit ange, Si tu as fait un cauchemar et que tu te sens encore secouée, respire profondément… je suis là avec toi, même si ce n\'est que par ces mots. Ferme les yeux un instant et imagine mes bras autour de toi, te protégeant de tout ce qui fait peur. Tu es en sécurité, toujours, et rien ne peut t\'atteindre tant que je veille sur toi. Rappelle-toi que les cauchemars sont seulement des histoires dans ton esprit, et que la réalité est douce et pleine de moi qui pense à toi. Prends ton doudou, blottis-toi dans ton lit, et pense à moi comme ton refuge. Bientôt, je serai là pour te serrer fort, chasser toutes les peurs, et te faire sourire jusqu\'à ce que le sommeil te berce tranquillement. Je t\'aime plus que tout, Aylie. 🌙' },
+        { id: 'cauchemar', emoji: '👻', title: 'Ouvre si tu as fait un cauchemar', password: 'roroestla', message: 'Mon petit ange, Si tu as fait un cauchemar et que tu te sens encore secouée, respire profondément… je suis là avec toi, même si ce n\'est que par ces mots. Ferme les yeux un instant et imagine mes bras autour de toi, te protégeant de tout ce qui fait peur. Tu es en sécurité, toujours, et rien ne peut t\'atteindre tant que je veille sur toi. Rappelle-toi que les cauchemars sont seulement des histoires dans ton esprit, et que la réalité est douce et pleine de moi qui pense à toi. Prends ton doudou, blottis-toi dans ton lit, et pense à moi comme ton refuge. Bontôt, je serai là pour te serrer fort, chasser toutes les peurs, et te faire sourire jusqu\'à ce que le sommeil te berce tranquillement. Je t\'aime plus que tout, Aylie. 🌙' },
         { id: 'pourquoi', emoji: '💝', title: 'Ouvre pour les raisons pourquoi je t\'aime', password: 'toi', message:'Mon amour,\n\nSi tu as ouvert cette enveloppe, c\'est pour découvrir toutes les raisons qui font que je t\'aime… et elles sont infinies.\nVoici quelques-unes de mes préférées :\n\n- J\'aime ton sourire qui illumine mes journées, même les plus grises.\n- J\'aime ton rire, qui me fait fondre et qui résonne dans mon cœur.\n- J\'aime la façon dont tu prends soin de moi, toujours attentionnée et douce.\n- J\'aime tes yeux, dans lesquels je me perds et trouve la paix.\n- J\'aime ton courage et ta force, même quand la vie n\'est pas facile.\n- J\'aime la complicité que nous partageons, nos blagues, nos secrets, nos moments à deux.\n- J\'aime tout ce que tu es, simplement et profondément, et tout ce que tu fais pour rendre ma vie meilleure.\n\nEt surtout, j\'aime que tu sois toi, Aylie, unique et merveilleuse.\nCette liste pourrait continuer encore et encore, mais je veux que tu saches que chaque instant avec toi est précieux, et que mon amour pour toi grandit chaque jour. 🤍'},
-        // Nouvelles lettres ajoutées
         { id: 'fache', emoji: '😠', title: 'Quand on s\'est fâché', password: 'pardon', message: 'Ma princesse,\n\nParfois, on se fâche, et c\'est normal dans un couple. Ces petites disputes font partie du jeu, même si elles peuvent être désagréables sur le moment.\n\nMais malgré tout cela, je t\'aime toujours autant, Aylie. Chaque désaccord nous apprend quelque chose, et chaque réconciliation nous rend plus forts ensemble.\nOn s\'est toujours relevés après, et on apprend à mieux se connaître à chaque fois.\n\nAlors prends une grande respiration, pense à tout le positif qu\'on partage, et souviens-toi que je serai toujours là, même après une petite tempête. Je t\'aime fort❤️' },
         { id: 'joyeuse', emoji: '😄', title: 'Quand tu es joyeuse', password: 'bonheur', message: 'Chaton,\n\nQuand tu es joyeuse, mon cœur danse avec le tien. Ta bonne humeur est contagieuse et illumine ma journée, même à distance.\n\nJ\'adore te voir sourire, rire aux éclats, et profiter de chaque petit moment. Ces instants me rappellent combien je suis chanceux de t\'avoir dans ma vie.\n\nContinue de rayonner, Aylie. Ton bonheur me rend heureux, et je veux toujours être là pour partager ces moments de joie avec toi.🌈' },
         { id: 'malade', emoji: '🤒', title: 'Quand tu es malade', password: 'rorotonmedicament', message: ' Ma chérie, \n\nSi tu es malade, je voudrais pouvoir être à tes côtés tout de suite pour te prendre dans mes bras et te réconforter.\n\nDès que je peux, je passerai t\'apporter des fleurs, peut-être des tulipes ou des roses, juste pour te voir sourire un peu plus malgré ce moment difficile.\n\nPrends soin de toi, repose-toi bien, et souviens-toi que je pense à toi à chaque instant. Je serai là pour te chouchouter et te faire sentir mieux. 🍵' },
@@ -825,7 +834,7 @@
     let isRotating = false;
     let currentTheme = localStorage.getItem('theme') || 'light';
 
-    // Fonction pour cacher les images manquantes - CORRIGÉE
+    // Fonction pour cacher les images manquantes
     function hideImage(img) {
         img.style.display = 'none';
         const container = img.parentElement;
@@ -851,7 +860,7 @@
         
         // Prévenir le scroll sur iOS
         document.addEventListener('touchmove', function(e) {
-            if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+            if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT' && e.target.className !== 'letter-message') {
                 e.preventDefault();
             }
         }, { passive: false });
@@ -1047,7 +1056,7 @@
         }
     }
 
-    // Mise à jour de l'affichage du carousel - OPTIMISÉE
+    // Mise à jour de l'affichage du carousel
     function updateCarousel() {
         const cards = carousel.querySelectorAll('.card');
         const angleStep = 360 / ENVELOPES.length;
@@ -1110,7 +1119,7 @@
         }, 700);
     }
 
-    // Rotation du carousel - OPTIMISÉE
+    // Rotation du carousel
     function rotateCarousel(direction) {
         isRotating = true;
         carousel.classList.add('carousel-smooth');
@@ -1120,7 +1129,7 @@
         updateCarousel();
     }
 
-    // Entrée dans le site - MODIFIÉE
+    // Entrée dans le site
     function enterSite() {
         const overlay = document.getElementById('overlay');
         overlay.classList.add('hidden');
@@ -1155,7 +1164,7 @@
         modal.setAttribute('aria-hidden', 'true');
         pwdInput.value='';
         error.textContent='';
-        document.body.classList.remove('no-scroll');
+        document.body.classList.add('no-scroll');
     }
 
     // Afficher la vue mot de passe
@@ -1164,7 +1173,7 @@
         letterView.style.display = 'none'; 
     }
 
-    // Afficher la lettre avec le bloc-notes
+    // Afficher la lettre avec le bloc-notes - CORRIGÉ POUR DÉFILEMENT
     function showLetter(text){ 
         passwordView.style.display = 'none'; 
         letterView.style.display = ''; 
@@ -1179,6 +1188,9 @@
                 <button class="btn" id="saveNotes">Enregistrer</button>
             </div>
         `;
+        
+        // PERMETTRE LE DÉFILEMENT DANS LA LETTRE
+        document.body.classList.remove('no-scroll');
         
         // Ajouter l'événement pour sauvegarder les notes
         document.getElementById('saveNotes').addEventListener('click', saveNotes);
