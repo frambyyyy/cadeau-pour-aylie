@@ -40,6 +40,7 @@
             height: 100%; 
             overflow: hidden;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+            touch-action: manipulation;
         }
         body {
             color: var(--text);
@@ -50,10 +51,8 @@
             transition: background 0.5s ease;
             padding-top: var(--safe-area-inset-top);
             padding-bottom: var(--safe-area-inset-bottom);
-            /* Correction pour la bande blanche en bas */
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            /* Nouveau: garantir que le fond couvre toute la zone */
             background-attachment: fixed;
         }
 
@@ -174,7 +173,6 @@
             font-size: 13px;
             opacity: 0.7;
         }
-        /* Nouveau compteur de jours */
         .days-counter {
             position: absolute;
             top: 10px;
@@ -385,7 +383,6 @@
             padding: 14px;
             padding-top: calc(14px + var(--safe-area-inset-top));
             padding-bottom: calc(14px + var(--safe-area-inset-bottom));
-            /* Correction pour permettre le défilement */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -405,7 +402,6 @@
             max-height: calc(90vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
             overflow-y: auto;
             margin: auto 0;
-            /* Nouveau: structure pour le défilement */
             display: flex;
             flex-direction: column;
         }
@@ -700,7 +696,6 @@
             height: -webkit-fill-available;
         }
 
-        /* CORRECTIF POUR DÉFILEMENT - AJOUTEZ CES STYLES */
         .letter-message {
             max-height: 50vh;
             overflow-y: auto;
@@ -732,15 +727,11 @@
                 max-height: 35vh;
             }
         }
-
-        /* NOUVEAUX STYLES POUR CORRIGER LES PROBLÈMES */
         
-        /* Correction pour la barre blanche en mode standalone */
         body.standalone {
             background-color: var(--bg1);
         }
         
-        /* Structure améliorée pour la modal avec défilement */
         .modal-content {
             flex: 1;
             overflow-y: auto;
@@ -755,7 +746,6 @@
             margin-top: auto;
         }
         
-        /* Correction pour iOS - garantit que le fond couvre toute la zone */
         @supports (-webkit-touch-callout: none) {
             body {
                 background-attachment: scroll;
@@ -767,7 +757,6 @@
             }
         }
         
-        /* Ajustements pour le défilement et l'accessibilité des boutons */
         .letter-view-container {
             display: flex;
             flex-direction: column;
@@ -778,6 +767,36 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* Nouveaux styles pour le swipe amélioré */
+        .swipe-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            touch-action: pan-y;
+        }
+        
+        .swipe-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .swipe-indicator.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -803,6 +822,12 @@
 
 <!-- Contenu principal -->
 <main id="mainContent">
+    <!-- Zone de swipe améliorée -->
+    <div class="swipe-area" id="swipeArea"></div>
+    
+    <!-- Indicateur de swipe -->
+    <div class="swipe-indicator" id="swipeIndicator">Swipe pour naviguer</div>
+    
     <!-- en-tête -->
     <header>
         <div class="title">Coffret d'enveloppes pour Aylie</div>
@@ -912,12 +937,22 @@
     const progressElement = document.getElementById('progress');
     const toast = document.getElementById('toast');
     const themeToggle = document.getElementById('themeToggle');
-    const daysCounter = document.getElementById('daysCounter'); // Nouveau compteur
+    const daysCounter = document.getElementById('daysCounter');
+    const swipeArea = document.getElementById('swipeArea');
+    const swipeIndicator = document.getElementById('swipeIndicator');
     let currentAngle = 0;
     let currentId = null;
     let currentIndex = 0;
     let isRotating = false;
     let currentTheme = localStorage.getItem('theme') || 'light';
+    let isModalOpen = false;
+    
+    // Variables pour la gestion du swipe
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let swipeInProgress = false;
 
     // Fonction pour cacher les images manquantes
     function hideImage(img) {
@@ -943,12 +978,8 @@
         updateCarousel();
         updateProgress();
         
-        // Prévenir le scroll sur iOS
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT' && e.target.className !== 'letter-message') {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        // Montrer l'indicateur de swipe brièvement
+        showSwipeIndicator();
         
         // Mettre à jour le compteur de jours
         updateDaysCounter();
@@ -973,6 +1004,14 @@
         
         // Mettre à jour l'affichage
         daysCounter.textContent = `${diffDays} jours d'amour ❤️`;
+    }
+
+    // Afficher l'indicateur de swipe
+    function showSwipeIndicator() {
+        swipeIndicator.classList.add('show');
+        setTimeout(() => {
+            swipeIndicator.classList.remove('show');
+        }, 3000);
     }
 
     // Création des enveloppes dans le carousel 3D
@@ -1035,7 +1074,7 @@
         
         // Navigation au clavier
         window.addEventListener('keydown', (e) => {
-            if (isRotating) return;
+            if (isRotating || isModalOpen) return;
             
             if (e.key === 'ArrowLeft') {
                 rotateCarousel('left');
@@ -1110,31 +1149,69 @@
             }
         });
         
-        // Navigation par swipe sur mobile
-        let touchStartX = 0;
-        let touchEndX = 0;
-        
-        carousel.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, false);
-        
-        carousel.addEventListener('touchend', e => {
-            if (isRotating) return;
+        // Gestion du swipe amélioré
+        setupSwipeListeners();
+    }
+
+    // Configuration des écouteurs de swipe
+    function setupSwipeListeners() {
+        // Swipe horizontal pour la navigation entre les enveloppes
+        document.addEventListener('touchstart', (e) => {
+            if (isModalOpen) return;
             
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, false);
-        
-        function handleSwipe() {
-            const diff = touchStartX - touchEndX;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            swipeInProgress = true;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!swipeInProgress || isModalOpen) return;
+            
+            // Empêcher le scroll pendant un swipe horizontal
+            const touchX = e.touches[0].clientX;
+            const diffX = Math.abs(touchX - touchStartX);
+            
+            if (diffX > 10) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (!swipeInProgress || isModalOpen || isRotating) return;
+            
+            touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
             const swipeThreshold = 50;
             
-            if (diff > swipeThreshold) {
-                rotateCarousel('right');
-            } else if (diff < -swipeThreshold) {
-                rotateCarousel('left');
+            // Détection du swipe horizontal
+            if (Math.abs(diffX) > swipeThreshold && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) {
+                    rotateCarousel('right');
+                } else {
+                    rotateCarousel('left');
+                }
             }
-        }
+            
+            swipeInProgress = false;
+        }, { passive: true });
+
+        // Swipe vertical pour fermer la modal
+        modal.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        modal.addEventListener('touchmove', (e) => {
+            const touchY = e.touches[0].clientY;
+            const diffY = touchY - touchStartY;
+            
+            // Si on swipe vers le bas assez loin, fermer la modal
+            if (diffY > 100) {
+                closeModal();
+            }
+        }, { passive: true });
     }
 
     // Création des indicateurs de position
@@ -1260,6 +1337,7 @@
         modal.classList.add('show');
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('no-scroll');
+        isModalOpen = true;
     }
 
     // Fermer la modal
@@ -1269,6 +1347,7 @@
         pwdInput.value='';
         error.textContent='';
         document.body.classList.remove('no-scroll');
+        isModalOpen = false;
     }
 
     // Afficher la vue mot de passe
@@ -1277,7 +1356,7 @@
         letterView.style.display = 'none'; 
     }
 
-    // Afficher la lettre avec le bloc-notes - CORRIGÉ POUR DÉFILEMENT
+    // Afficher la lettre avec le bloc-notes
     function showLetter(text){ 
         passwordView.style.display = 'none'; 
         letterView.style.display = ''; 
